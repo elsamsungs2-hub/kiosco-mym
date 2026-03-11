@@ -28,7 +28,6 @@
         --purple: #9b59b6;
         --bg: #f4f6f8;
       }
-      /* --- ESTILOS DE PRUEBA Y BLOQUEO --- */
       #trial-banner {
         position: fixed;
         top: 0;
@@ -41,6 +40,32 @@
         padding: 4px 0;
         z-index: 10001;
         font-weight: bold;
+      }
+      #alerta-stock {
+        display: none;
+        background: #e74c3c;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        font-weight: bold;
+        width: 100%;
+        position: sticky;
+        top: 25px;
+        z-index: 999;
+        cursor: pointer;
+        animation: pulse 2s infinite;
+        font-size: 14px;
+      }
+      @keyframes pulse {
+        0% {
+          background-color: #e74c3c;
+        }
+        50% {
+          background-color: #c0392b;
+        }
+        100% {
+          background-color: #e74c3c;
+        }
       }
       #block-screen {
         position: fixed;
@@ -59,7 +84,6 @@
         padding: 40px;
         box-sizing: border-box;
       }
-      /* --- SPLASH SCREEN --- */
       #splash {
         position: fixed;
         top: 0;
@@ -89,14 +113,12 @@
         max-width: 450px;
         display: none;
       }
-
-      /* --- NAVEGACIÓN (Tus Pestañas) --- */
       .nav {
         display: flex;
         background: white;
         margin-bottom: 12px;
         border-radius: 10px;
-        overflow: hidden;
+        overflow-x: auto;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         width: 100%;
       }
@@ -106,41 +128,17 @@
         text-align: center;
         cursor: pointer;
         font-weight: bold;
-        font-size: 10px;
+        font-size: 9px;
         background: #f8f9fa;
         border: none;
         text-transform: uppercase;
         color: #7f8c8d;
+        min-width: 70px;
       }
       .tab.active {
         background: var(--primary);
         color: white;
       }
-
-      /* --- BUSCADOR --- */
-      .search-container {
-        display: flex;
-        background: #fff;
-        border: 2px solid var(--primary);
-        border-radius: 8px;
-        overflow: hidden;
-        margin-bottom: 10px;
-      }
-      .search-container input {
-        border: none;
-        padding: 12px;
-        flex: 1;
-        font-size: 16px;
-        outline: none;
-      }
-      .btn-search {
-        background: var(--primary);
-        border: none;
-        padding: 0 15px;
-        color: white;
-        font-size: 18px;
-      }
-
       .card {
         background: white;
         padding: 15px;
@@ -155,7 +153,6 @@
       .section.active {
         display: block;
       }
-
       input {
         padding: 12px;
         border: 1px solid #ccc;
@@ -173,7 +170,6 @@
         display: block;
         margin-bottom: 4px;
       }
-
       .btn {
         padding: 15px;
         border: none;
@@ -201,7 +197,24 @@
       .btn-purple {
         background: var(--purple);
       }
-
+      .faq-item {
+        border-bottom: 1px solid #eee;
+        padding: 10px 0;
+      }
+      .faq-question {
+        font-weight: bold;
+        color: var(--primary);
+        cursor: pointer;
+        display: block;
+        font-size: 14px;
+      }
+      .faq-answer {
+        font-size: 13px;
+        color: #555;
+        margin-top: 5px;
+        display: none;
+        line-height: 1.4;
+      }
       #reader {
         position: fixed;
         top: 0;
@@ -225,7 +238,6 @@
         font-weight: bold;
         font-size: 16px;
       }
-
       .item {
         display: flex;
         justify-content: space-between;
@@ -233,27 +245,32 @@
         padding: 10px 0;
         border-bottom: 1px solid #eee;
       }
+      .footer-credits {
+        font-size: 11px;
+        color: #888;
+        margin-top: 20px;
+        text-align: center;
+        line-height: 1.5;
+      }
+      .footer-credits a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: bold;
+      }
     </style>
   </head>
   <body>
     <div id="trial-banner">
       ⏳ VERSIÓN DE PRUEBA: <span id="days-left"></span> DÍAS RESTANTES
     </div>
+    <div id="alerta-stock" onclick="ver('stock')">
+      ⚠️ REPONER PRODUCTOS (STOCK CRÍTICO)
+    </div>
+
     <div id="block-screen">
       <div style="font-size: 60px; margin-bottom: 20px">🔒</div>
-      <h1>PERIODO DE PRUEBA FINALIZADO</h1>
-      <p>Para continuar usando M&M Gestión Pro, contacte al desarrollador.</p>
-      <div
-        style="
-          background: white;
-          color: #1a237e;
-          padding: 15px;
-          border-radius: 10px;
-          font-weight: bold;
-        "
-      >
-        📲 WhatsApp: +54 9 XXX XXXXXXX
-      </div>
+      <h1>PRUEBA FINALIZADA</h1>
+      <p>Contacte al desarrollador para activar la versión completa.</p>
     </div>
 
     <div id="splash">
@@ -268,17 +285,18 @@
         </button>
         <button id="b-sto" class="tab" onclick="ver('stock')">STOCK</button>
         <button id="b-deu" class="tab" onclick="ver('deudores')">DEUDA</button>
-        <button id="b-caj" class="tab" onclick="ver('caja')">💵 CAJA</button>
+        <button id="b-caj" class="tab" onclick="ver('caja')">CAJA</button>
+        <button id="b-ayu" class="tab" onclick="ver('ayuda')">AYUDA</button>
         <button id="b-cfg" class="tab" onclick="ver('config')">⚙️</button>
       </div>
 
       <div id="s-inventario" class="section active">
-        <div class="search-container">
-          <input type="text" id="busqueda" placeholder="Buscar por nombre..." />
-          <button class="btn-search" onclick="buscarManualPorNombre()">
-            🔍
-          </button>
-        </div>
+        <input
+          type="text"
+          id="busqueda"
+          placeholder="🔍 Buscar por nombre..."
+          oninput="buscarManualPorNombre()"
+        />
         <button
           class="btn"
           style="background: #607d8b"
@@ -288,30 +306,20 @@
         </button>
         <div id="reader"></div>
         <div class="card">
-          <label>CÓDIGO SELECCIONADO</label>
-          <input
-            type="text"
-            id="cod"
-            readonly
-            style="background: #eee"
-            placeholder="Código automático"
-          />
-          <label>NOMBRE DEL PRODUCTO</label>
-          <input type="text" id="nom" placeholder="Ej: Alfajor Jorgito" />
+          <label>CÓDIGO</label
+          ><input type="text" id="cod" readonly style="background: #eee" />
+          <label>PRODUCTO</label><input type="text" id="nom" />
           <div style="display: flex; gap: 10px">
             <div style="flex: 1">
-              <label>PRECIO $</label
-              ><input type="number" id="pre" placeholder="0.00" />
+              <label>PRECIO $</label><input type="number" id="pre" />
             </div>
             <div style="flex: 1">
-              <label>CANT. STOCK</label
-              ><input type="number" id="can" placeholder="0" />
+              <label>STOCK</label><input type="number" id="can" />
             </div>
           </div>
-          <label>FECHA DE VENCIMIENTO</label>
-          <input type="date" id="vto" />
+          <label>FECHA DE VENCIMIENTO</label><input type="date" id="vto" />
           <button class="btn btn-venta" onclick="btnVenta()">
-            🛒 REGISTRAR VENTA (-1)
+            🛒 REGISTRAR VENTA
           </button>
           <button class="btn btn-save" onclick="btnGuardar()">
             📥 ACTUALIZAR / CARGAR
@@ -327,119 +335,211 @@
 
       <div id="s-stock" class="section">
         <div class="card">
-          <input
-            type="text"
-            id="bus-stock"
-            placeholder="🔍 Buscar en inventario..."
-            onkeyup="filtrarStock()"
-          />
-          <h4 style="color: red; margin-bottom: 10px">
-            ⚠️ REPOSICIÓN Y VENCIMIENTOS
-          </h4>
+          <h4 style="color: var(--danger)">⚠️ STOCK CRÍTICO (2 O MENOS)</h4>
           <div id="lista-baja"></div>
-          <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee" />
-          <h4 style="color: blue; margin-bottom: 10px">📦 INVENTARIO TOTAL</h4>
+          <hr />
+          <h4>📦 TODO EL INVENTARIO</h4>
           <div id="lista-total"></div>
-        </div>
-      </div>
-
-      <div id="s-caja" class="section">
-        <div class="card">
-          <h3>Caja del día</h3>
-          <div
-            id="total-dia"
-            style="
-              font-size: 32px;
-              color: #27ae60;
-              font-weight: bold;
-              text-align: center;
-              margin: 10px 0;
-            "
-          >
-            $0
-          </div>
-          <div
-            id="resumen-productos"
-            style="margin-bottom: 20px; font-size: 14px; color: #555"
-          ></div>
-          <div id="historial-ventas"></div>
-          <button
-            class="btn"
-            style="background: #e74c3c; margin-top: 20px"
-            onclick="cerrarCaja()"
-          >
-            ⚠️ REINICIAR DÍA
-          </button>
         </div>
       </div>
 
       <div id="s-deudores" class="section">
         <div class="card">
-          <h3>Deudores</h3>
-          <input
-            type="text"
-            id="bus-deu"
-            placeholder="🔍 Buscar cliente..."
-            onkeyup="filtrarDeudores()"
-            style="border: 2px solid var(--danger); margin-bottom: 15px"
-          />
+          <h3>Lista de Fiados</h3>
           <div id="lista-deudores"></div>
+        </div>
+      </div>
+
+      <div id="s-caja" class="section">
+        <div class="card">
+          <h3>Ventas de hoy</h3>
+          <div
+            id="total-dia"
+            style="
+              font-size: 32px;
+              color: var(--success);
+              text-align: center;
+              font-weight: bold;
+            "
+          >
+            $0
+          </div>
+          <div id="historial-ventas"></div>
+          <button
+            class="btn"
+            style="background: var(--danger); margin-top: 20px"
+            onclick="cerrarCaja()"
+          >
+            REINICIAR DÍA
+          </button>
+        </div>
+      </div>
+
+      <div id="s-ayuda" class="section">
+        <div class="card">
+          <h3
+            style="
+              color: var(--primary);
+              border-bottom: 2px solid var(--primary);
+              padding-bottom: 5px;
+            "
+          >
+            📖 Manual de Uso
+          </h3>
+
+          <div class="faq-item">
+            <span class="faq-question" onclick="toggleFaq(this)"
+              >❓ ¿Cómo registro una venta rápido?</span
+            >
+            <p class="faq-answer">
+              Buscá el producto (escaneando o por nombre). Cuando aparezcan los
+              datos en los cuadros, tocá el botón verde
+              <b>"REGISTRAR VENTA"</b>. Eso resta 1 del stock y suma la plata a
+              la caja automáticamente.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <span class="faq-question" onclick="toggleFaq(this)"
+              >❓ ¿Cómo cargo un producto que no tiene código?</span
+            >
+            <p class="faq-answer">
+              Escribí el nombre directamente en el cuadro "PRODUCTO", poné el
+              precio y el stock, y dale al botón azul
+              <b>"ACTUALIZAR / CARGAR"</b>. Para venderlo después, lo buscás por
+              nombre arriba.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <span class="faq-question" onclick="toggleFaq(this)"
+              >❓ ¿Qué hago si un cliente me debe (Fiado)?</span
+            >
+            <p class="faq-answer">
+              Buscá el producto, y en lugar de "Venta", tocá
+              <b>"ANOTAR FIADO"</b>. Poné el nombre del cliente y listo. Podés
+              ver cuánto te debe cada uno en la pestaña <b>DEUDA</b>.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <span class="faq-question" onclick="toggleFaq(this)"
+              >❓ Un deudor me pagó una parte, ¿cómo lo anoto?</span
+            >
+            <p class="faq-answer">
+              Andá a la pestaña <b>DEUDA</b>, buscá al cliente y tocá
+              <b>"PAGÓ"</b>. La app te pregunta cuánto. Si ponés el monto total,
+              se borra de la lista; si ponés menos (ej. me debía 1000 y me dio
+              500), la cuenta se actualiza sola.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <span class="faq-question" onclick="toggleFaq(this)"
+              >❓ ¿Para qué sirve el botón morado "Consumo Interno"?</span
+            >
+            <p class="faq-answer">
+              Usalo cuando vos (o alguien del negocio) saca algo para consumir.
+              Resta el stock para que el inventario sea real, pero
+              <b>NO suma plata a la caja</b> porque no hubo entrada de dinero.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <span class="faq-question" onclick="toggleFaq(this)"
+              >❓ ¿Cómo limpio la caja al final del día?</span
+            >
+            <p class="faq-answer">
+              En la pestaña <b>CAJA</b>, anotá el total en tu cuaderno y tocá
+              <b>"REINICIAR DÍA"</b>. Eso borra el historial de ventas del día y
+              deja el contador en $0 para mañana.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <span class="faq-question" onclick="toggleFaq(this)"
+              >❓ La cámara no abre o no escanea</span
+            >
+            <p class="faq-answer">
+              1. Limpiá el lente. <br />2. Asegurate de que haya buena luz.
+              <br />3. Si el código está roto, escribí el nombre arriba en la
+              lupa y buscalo manualmente.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <span class="faq-question" onclick="toggleFaq(this)"
+              >⚠️ IMPORTANTE: ¿Se pueden borrar mis datos?</span
+            >
+            <p class="faq-answer">
+              Los datos se guardan en este teléfono.
+              <b>NO borres el historial de Chrome/Safari</b> y no uses apps de
+              "limpieza profunda", porque podrías borrar el inventario. <br /><b
+                >CONSEJO:</b
+              >
+              Una vez por semana, andá a la ⚙️ y dale a "DESCARGAR BACKUP".
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <span class="faq-question" onclick="toggleFaq(this)"
+              >❓ Cambié el celular, ¿cómo paso todo?</span
+            >
+            <p class="faq-answer">
+              En el celu viejo: ⚙️ -> <b>DESCARGAR BACKUP</b> (mandátelo por
+              WhatsApp). <br />En el celu nuevo: ⚙️ -> <b>SUBIR COPIA</b> y
+              elegí ese archivo. ¡Listo!
+            </p>
+          </div>
+          <p
+            style="
+              font-size: 11px;
+              color: #888;
+              text-align: center;
+              margin-top: 15px;
+            "
+          ></p>
         </div>
       </div>
 
       <div id="s-config" class="section">
         <div class="card">
-          <h3>Configuración</h3>
+          <h3>Copia de Seguridad</h3>
           <button class="btn btn-save" onclick="exportarDatos()">
             📥 DESCARGAR BACKUP
           </button>
-          <hr style="margin: 20px 0" />
-          <label>📤 SUBIR COPIA (RESTAURAR):</label>
+          <hr />
+          <label>📤 RESTAURAR COPIA:</label>
           <input type="file" id="file-backup" onchange="importarDatos()" />
-          <hr style="margin: 20px 0" />
-
-          <button
-            id="btn-install"
-            class="btn"
-            style="background: var(--success); display: none"
-          >
-            📲 INSTALAR APP EN MENU
-          </button>
-          <p
-            id="install-text"
-            style="font-size: 12px; color: #666; text-align: center"
-          >
-            Si no ves el botón "Instalar", toca los 3 puntos (⋮) o el botón
-            compartir y selecciona "Agregar a la pantalla de inicio".
-          </p>
         </div>
+      </div>
+
+      <div class="footer-credits">
+        M&M Gestión Pro v1.0 - Empedrado<br />
+        Desarrollado por
+        <a
+          href="https://www.linkedin.com/in/hugo-orlando-p%C3%A9rez-b65551b0"
+          target="_blank"
+          >Hugo</a
+        >
       </div>
     </div>
 
     <script>
       let html5QrCode = null;
-      let deferredPrompt;
-
-      // --- INSTALACIÓN PWA ---
-      window.addEventListener("beforeinstallprompt", (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        const btnInstall = document.getElementById("btn-install");
-        btnInstall.style.display = "flex";
-
-        btnInstall.addEventListener("click", () => {
-          deferredPrompt.prompt();
-          deferredPrompt.userChoice.then((choiceResult) => {
-            if (choiceResult.outcome === "accepted") {
-              console.log("Mauro aceptó la instalación");
-            }
-            deferredPrompt = null;
-            btnInstall.style.display = "none";
-          });
-        });
-      });
-
-      // --- LÓGICA COMERCIAL ---
+      function toggleFaq(el) {
+        const ans = el.nextElementSibling;
+        ans.style.display = ans.style.display === "block" ? "none" : "block";
+      }
+      function verificarAlertas() {
+        let s = JSON.parse(localStorage.getItem("mm_s")) || [];
+        let faltantes = s.filter((p) => p.can <= 2);
+        let banner = document.getElementById("alerta-stock");
+        if (faltantes.length > 0) {
+          banner.style.display = "block";
+          banner.innerHTML = `⚠️ REPONER: ${faltantes.length} PRODUCTOS EN CRÍTICO`;
+        } else banner.style.display = "none";
+      }
       function controlarLicencia() {
         let inicio = localStorage.getItem("mm_fecha_inicio");
         if (!inicio) {
@@ -449,32 +549,26 @@
         let ahora = new Date().getTime();
         let sieteDias = 7 * 24 * 60 * 60 * 1000;
         let transcurrido = ahora - inicio;
-        let diasRestantes = Math.ceil(
-          (sieteDias - transcurrido) / (1000 * 60 * 60 * 24)
-        );
         if (transcurrido >= sieteDias) {
           document.getElementById("block-screen").style.display = "flex";
         } else {
-          document.getElementById("days-left").innerText = diasRestantes;
+          document.getElementById("days-left").innerText = Math.ceil(
+            (sieteDias - transcurrido) / (1000 * 60 * 60 * 24)
+          );
         }
       }
-
       window.onload = () => {
         controlarLicencia();
+        verificarAlertas();
         setTimeout(() => {
           document.getElementById("splash").style.display = "none";
           document.getElementById("main-app").style.display = "block";
         }, 1500);
       };
-
-      // --- FUNCIONES DE NAVEGACIÓN Y LOGICA ---
       function ver(p) {
         document
-          .querySelectorAll(".section")
-          .forEach((s) => s.classList.remove("active"));
-        document
-          .querySelectorAll(".tab")
-          .forEach((t) => t.classList.remove("active"));
+          .querySelectorAll(".section, .tab")
+          .forEach((el) => el.classList.remove("active"));
         document.getElementById("s-" + p).classList.add("active");
         let btn = document.getElementById("b-" + p.substring(0, 3));
         if (btn) btn.classList.add("active");
@@ -482,43 +576,27 @@
         if (p === "deudores") dibujarDeudores();
         if (p === "caja") dibujarCaja();
       }
-
       async function activarCamara() {
         const readerDiv = document.getElementById("reader");
         readerDiv.style.display = "flex";
-        readerDiv.innerHTML = `<div id="video-container"></div><button class="btn-close-cam" onclick="cerrarLector()">❌ CERRAR CÁMARA</button>`;
+        readerDiv.innerHTML = `<div id="video-container"></div><button class="btn-close-cam" onclick="cerrarLector()">❌ CERRAR</button>`;
         html5QrCode = new Html5Qrcode("video-container");
-        const config = { fps: 10, qrbox: { width: 300, height: 150 } };
-        try {
-          await html5QrCode.start(
-            { facingMode: "environment" },
-            config,
-            (text) => {
-              document.getElementById("cod").value = text;
-              buscarPorCodigo(text);
-              cerrarLector();
-            }
-          );
-        } catch (err) {
-          alert("Error de cámara");
-          cerrarLector();
-        }
+        await html5QrCode.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: 250 },
+          (text) => {
+            document.getElementById("cod").value = text;
+            buscarPorCodigo(text);
+            cerrarLector();
+          }
+        );
       }
-
       function cerrarLector() {
-        if (html5QrCode) {
-          html5QrCode
-            .stop()
-            .then(() => {
-              document.getElementById("reader").style.display = "none";
-              html5QrCode = null;
-            })
-            .catch(() => {
-              document.getElementById("reader").style.display = "none";
-            });
-        }
+        if (html5QrCode)
+          html5QrCode.stop().then(() => {
+            document.getElementById("reader").style.display = "none";
+          });
       }
-
       function buscarPorCodigo(codigo) {
         let s = JSON.parse(localStorage.getItem("mm_s")) || [];
         let p = s.find((x) => x.cod.trim() === codigo.trim());
@@ -528,46 +606,44 @@
           document.getElementById("can").value = p.can;
           document.getElementById("vto").value = p.vto || "";
         } else {
-          let temp = codigo;
           limpiar();
-          document.getElementById("cod").value = temp;
+          document.getElementById("cod").value = codigo;
         }
       }
-
       function buscarManualPorNombre() {
         let bus = document.getElementById("busqueda").value.toLowerCase();
+        if (bus.length < 2) return;
         let s = JSON.parse(localStorage.getItem("mm_s")) || [];
         let p = s.find((x) => x.nom.toLowerCase().includes(bus));
-        if (p) {
-          document.getElementById("cod").value = p.cod;
-          buscarPorCodigo(p.cod);
-        } else {
-          alert("No encontrado");
-        }
+        if (p) buscarPorCodigo(p.cod);
       }
-
       function btnGuardar() {
-        let c = document.getElementById("cod").value;
-        let n = document.getElementById("nom").value;
-        let p = document.getElementById("pre").value;
-        let q = parseInt(document.getElementById("can").value) || 0;
-        let v = document.getElementById("vto").value;
+        let c = document.getElementById("cod").value,
+          n = document.getElementById("nom").value,
+          p = document.getElementById("pre").value,
+          q = parseInt(document.getElementById("can").value) || 0,
+          v = document.getElementById("vto").value;
         if (!n || !p) return alert("Falta nombre o precio");
         let s = JSON.parse(localStorage.getItem("mm_s")) || [];
         let i = s.findIndex((x) => x.cod === c);
         if (i > -1) s[i] = { cod: c, nom: n, pre: p, can: q, vto: v };
         else s.push({ cod: c, nom: n, pre: p, can: q, vto: v });
         localStorage.setItem("mm_s", JSON.stringify(s));
+        verificarAlertas();
         alert("¡Guardado!");
         limpiar();
       }
-
       function btnVenta() {
         let c = document.getElementById("cod").value;
         let s = JSON.parse(localStorage.getItem("mm_s")) || [];
         let i = s.findIndex((x) => x.cod === c);
         if (i > -1 && s[i].can > 0) {
           s[i].can--;
+          if (s[i].can <= 2) {
+            new Audio(
+              "https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
+            ).play();
+          }
           localStorage.setItem("mm_s", JSON.stringify(s));
           let hoy = JSON.parse(localStorage.getItem("mm_hoy")) || [];
           hoy.push({
@@ -576,11 +652,11 @@
             hora: new Date().toLocaleTimeString(),
           });
           localStorage.setItem("mm_hoy", JSON.stringify(hoy));
+          verificarAlertas();
           alert("Vendido");
           limpiar();
         } else alert("Sin stock");
       }
-
       function consumoInterno() {
         let c = document.getElementById("cod").value;
         let s = JSON.parse(localStorage.getItem("mm_s")) || [];
@@ -589,41 +665,23 @@
           if (confirm("¿Consumo interno?")) {
             s[i].can--;
             localStorage.setItem("mm_s", JSON.stringify(s));
+            verificarAlertas();
             limpiar();
           }
         }
       }
-
       function dibujarStock() {
         let s = JSON.parse(localStorage.getItem("mm_s")) || [];
-        let cT = document.getElementById("lista-total");
-        let cB = document.getElementById("lista-baja");
+        let cT = document.getElementById("lista-total"),
+          cB = document.getElementById("lista-baja");
         cT.innerHTML = "";
         cB.innerHTML = "";
-        s.forEach((p, idx) => {
-          let critico = p.can < 5;
-          let html = `<div class="item item-stock" data-nom="${p.nom.toLowerCase()}" style="border-left:5px solid ${
-            critico ? "#e74c3c" : "#27ae60"
-          }; padding-left:10px;">
-              <div><strong>${p.nom}</strong><br><small>$${p.pre} | Stock: ${
-            p.can
-          }</small></div>
-              <div><button onclick="ajustarStock(${idx},-1)">-</button><button onclick="ajustarStock(${idx},1)">+</button></div>
-            </div>`;
+        s.forEach((p) => {
+          let html = `<div class="item"><span>${p.nom} (Stock: ${p.can})</span></div>`;
           cT.innerHTML += html;
-          if (critico) cB.innerHTML += html;
+          if (p.can <= 2) cB.innerHTML += html;
         });
       }
-
-      function ajustarStock(i, cant) {
-        let s = JSON.parse(localStorage.getItem("mm_s"));
-        if (s[i].can + cant >= 0) {
-          s[i].can += cant;
-          localStorage.setItem("mm_s", JSON.stringify(s));
-          dibujarStock();
-        }
-      }
-
       function dibujarCaja() {
         let h = JSON.parse(localStorage.getItem("mm_hoy")) || [];
         let tot = h.reduce((a, b) => a + b.pre, 0);
@@ -635,26 +693,44 @@
           )
           .join("");
       }
-
       function cerrarCaja() {
         if (confirm("¿Reiniciar día?")) {
           localStorage.removeItem("mm_hoy");
           dibujarCaja();
         }
       }
-
-      function filtrarStock() {
-        let f = document.getElementById("bus-stock").value.toLowerCase();
-        document
-          .querySelectorAll(".item-stock")
-          .forEach(
-            (i) =>
-              (i.style.display = i.getAttribute("data-nom").includes(f)
-                ? "flex"
-                : "none")
-          );
+      function btnFiado() {
+        let n = document.getElementById("nom").value,
+          p = document.getElementById("pre").value;
+        if (!n) return alert("Seleccioná producto");
+        let cli = prompt("¿A quién anotamos?");
+        if (cli) {
+          let d = JSON.parse(localStorage.getItem("mm_d")) || {};
+          d[cli] = (d[cli] || 0) + parseFloat(p);
+          localStorage.setItem("mm_d", JSON.stringify(d));
+          alert("Anotado");
+          limpiar();
+        }
       }
-
+      function dibujarDeudores() {
+        let d = JSON.parse(localStorage.getItem("mm_d")) || {};
+        document.getElementById("lista-deudores").innerHTML = Object.keys(d)
+          .map((n) =>
+            d[n] > 0
+              ? `<div class="item"><span>${n}: $${d[n]}</span><button onclick="pagar('${n}')">PAGÓ</button></div>`
+              : ""
+          )
+          .join("");
+      }
+      function pagar(n) {
+        let d = JSON.parse(localStorage.getItem("mm_d")),
+          p = prompt("¿Cuánto paga " + n + "?");
+        if (p) {
+          d[n] -= parseFloat(p);
+          localStorage.setItem("mm_d", JSON.stringify(d));
+          dibujarDeudores();
+        }
+      }
       function exportarDatos() {
         let d = {
           s: localStorage.getItem("mm_s"),
@@ -668,10 +744,9 @@
         a.download = "backup_negocio.json";
         a.click();
       }
-
       function importarDatos() {
-        let f = document.getElementById("file-backup").files[0];
-        let r = new FileReader();
+        let f = document.getElementById("file-backup").files[0],
+          r = new FileReader();
         r.onload = (e) => {
           let d = JSON.parse(e.target.result);
           localStorage.setItem("mm_s", d.s);
@@ -681,42 +756,6 @@
         };
         r.readAsText(f);
       }
-
-      function btnFiado() {
-        let n = document.getElementById("nom").value;
-        let p = document.getElementById("pre").value;
-        if (!n) return alert("Seleccioná producto");
-        let cli = prompt("¿A quién anotamos?");
-        if (cli) {
-          let d = JSON.parse(localStorage.getItem("mm_d")) || {};
-          d[cli] = (d[cli] || 0) + parseFloat(p);
-          localStorage.setItem("mm_d", JSON.stringify(d));
-          limpiar();
-        }
-      }
-
-      function dibujarDeudores() {
-        let d = JSON.parse(localStorage.getItem("mm_d")) || {};
-        let cont = document.getElementById("lista-deudores");
-        cont.innerHTML = Object.keys(d)
-          .map((n) =>
-            d[n] > 0
-              ? `<div class="item"><span>${n}: $${d[n]}</span><button onclick="pagar('${n}')">PAGÓ</button></div>`
-              : ""
-          )
-          .join("");
-      }
-
-      function pagar(n) {
-        let d = JSON.parse(localStorage.getItem("mm_d"));
-        let p = prompt("¿Cuánto paga " + n + "?");
-        if (p) {
-          d[n] -= parseFloat(p);
-          localStorage.setItem("mm_d", JSON.stringify(d));
-          dibujarDeudores();
-        }
-      }
-
       function limpiar() {
         ["cod", "nom", "pre", "can", "vto"].forEach(
           (id) => (document.getElementById(id).value = "")
