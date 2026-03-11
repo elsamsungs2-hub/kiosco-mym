@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="theme-color" content="#3949ab" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <title>M&M | Gestión Pro</title>
+
+    <link
+      rel="manifest"
+      href="data:application/manifest+json;base64,ewogICJuYW1lIjogIktpb3NjbyBNJk0iLAogICJzaG9ydF9uYW1lIjogIk0mTSIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjZjRmNmg4IiwKICAidGhlbWVfY29sb3IiOiAiIzM5NDlhYiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImh0dHBzOi8vaS5pYmIuY28vajlmUjdCeC9TY3JlZW5zaG90LTIwMjYwMzExLTEwNTUzNi1XaGF0c0FwcC1CdXNpbmVzcy5qcGciLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL2pwZWciCiAgICB9CiAgXQp9"
+    />
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+      :root {
+        --primary: #3949ab;
+        --success: #27ae60;
+        --danger: #e74c3c;
+        --purple: #9b59b6;
+        --bg: #f4f6f8;
+      }
+      /* --- ESTILOS DE PRUEBA Y BLOQUEO --- */
+      #trial-banner {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: #f39c12;
+        color: white;
+        text-align: center;
+        font-size: 11px;
+        padding: 4px 0;
+        z-index: 10001;
+        font-weight: bold;
+      }
+      #block-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #1a237e;
+        color: white;
+        z-index: 20000;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 40px;
+        box-sizing: border-box;
+      }
+      /* --- SPLASH SCREEN --- */
+      #splash {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--primary);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+      }
+      body {
+        font-family: sans-serif;
+        background: var(--bg);
+        margin: 0;
+        padding: 10px;
+        padding-top: 25px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .app-container {
+        width: 100%;
+        max-width: 450px;
+        display: none;
+      }
+
+      /* --- NAVEGACIÓN (Tus Pestañas) --- */
+      .nav {
+        display: flex;
+        background: white;
+        margin-bottom: 12px;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        width: 100%;
+      }
+      .tab {
+        flex: 1;
+        padding: 12px 5px;
+        text-align: center;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 10px;
+        background: #f8f9fa;
+        border: none;
+        text-transform: uppercase;
+        color: #7f8c8d;
+      }
+      .tab.active {
+        background: var(--primary);
+        color: white;
+      }
+
+      /* --- BUSCADOR --- */
+      .search-container {
+        display: flex;
+        background: #fff;
+        border: 2px solid var(--primary);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 10px;
+      }
+      .search-container input {
+        border: none;
+        padding: 12px;
+        flex: 1;
+        font-size: 16px;
+        outline: none;
+      }
+      .btn-search {
+        background: var(--primary);
+        border: none;
+        padding: 0 15px;
+        color: white;
+        font-size: 18px;
+      }
+
+      .card {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+      .section {
+        display: none;
+      }
+      .section.active {
+        display: block;
+      }
+
+      input {
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 16px;
+        width: 100%;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+      }
+      label {
+        font-size: 10px;
+        font-weight: bold;
+        color: #999;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .btn {
+        padding: 15px;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        width: 100%;
+        cursor: pointer;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .btn-venta {
+        background: var(--success);
+      }
+      .btn-save {
+        background: var(--primary);
+      }
+      .btn-fiado {
+        background: var(--danger);
+      }
+      .btn-purple {
+        background: var(--purple);
+      }
+
+      #reader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 10000;
+        display: none;
+        flex-direction: column;
+      }
+      #video-container {
+        flex-grow: 1;
+        width: 100%;
+      }
+      .btn-close-cam {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 20px;
+        font-weight: bold;
+        font-size: 16px;
+      }
+
+      .item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="trial-banner">
+      ⏳ VERSIÓN DE PRUEBA: <span id="days-left"></span> DÍAS RESTANTES
+    </div>
+    <div id="block-screen">
+      <div style="font-size: 60px; margin-bottom: 20px">🔒</div>
+      <h1>PERIODO DE PRUEBA FINALIZADO</h1>
+      <p>Para continuar usando M&M Gestión Pro, contacte al desarrollador.</p>
+      <div
+        style="
+          background: white;
+          color: #1a237e;
+          padding: 15px;
+          border-radius: 10px;
+          font-weight: bold;
+        "
+      >
+        📲 WhatsApp: +54 9 XXX XXXXXXX
+      </div>
+    </div>
+
+    <div id="splash">
+      <h1>M&M</h1>
+      <p>GESTIÓN PROFESIONAL</p>
+    </div>
+
+    <div id="main-app" class="app-container">
+      <div class="nav">
+        <button id="b-inv" class="tab active" onclick="ver('inventario')">
+          VENTA
+        </button>
+        <button id="b-sto" class="tab" onclick="ver('stock')">STOCK</button>
+        <button id="b-deu" class="tab" onclick="ver('deudores')">DEUDA</button>
+        <button id="b-caj" class="tab" onclick="ver('caja')">💵 CAJA</button>
+        <button id="b-cfg" class="tab" onclick="ver('config')">⚙️</button>
+      </div>
+
+      <div id="s-inventario" class="section active">
+        <div class="search-container">
+          <input type="text" id="busqueda" placeholder="Buscar por nombre..." />
+          <button class="btn-search" onclick="buscarManualPorNombre()">
+            🔍
+          </button>
+        </div>
+        <button
+          class="btn"
+          style="background: #607d8b"
+          onclick="activarCamara()"
+        >
+          📷 ESCANEAR CÓDIGO
+        </button>
+        <div id="reader"></div>
+        <div class="card">
+          <label>CÓDIGO SELECCIONADO</label>
+          <input
+            type="text"
+            id="cod"
+            readonly
+            style="background: #eee"
+            placeholder="Código automático"
+          />
+          <label>NOMBRE DEL PRODUCTO</label>
+          <input type="text" id="nom" placeholder="Ej: Alfajor Jorgito" />
+          <div style="display: flex; gap: 10px">
+            <div style="flex: 1">
+              <label>PRECIO $</label
+              ><input type="number" id="pre" placeholder="0.00" />
+            </div>
+            <div style="flex: 1">
+              <label>CANT. STOCK</label
+              ><input type="number" id="can" placeholder="0" />
+            </div>
+          </div>
+          <label>FECHA DE VENCIMIENTO</label>
+          <input type="date" id="vto" />
+          <button class="btn btn-venta" onclick="btnVenta()">
+            🛒 REGISTRAR VENTA (-1)
+          </button>
+          <button class="btn btn-save" onclick="btnGuardar()">
+            📥 ACTUALIZAR / CARGAR
+          </button>
+          <button class="btn btn-fiado" onclick="btnFiado()">
+            👤 ANOTAR FIADO
+          </button>
+          <button class="btn btn-purple" onclick="consumoInterno()">
+            🍴 CONSUMO INTERNO (-1)
+          </button>
+        </div>
+      </div>
+
+      <div id="s-stock" class="section">
+        <div class="card">
+          <input
+            type="text"
+            id="bus-stock"
+            placeholder="🔍 Buscar en inventario..."
+            onkeyup="filtrarStock()"
+          />
+          <h4 style="color: red; margin-bottom: 10px">
+            ⚠️ REPOSICIÓN Y VENCIMIENTOS
+          </h4>
+          <div id="lista-baja"></div>
+          <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee" />
+          <h4 style="color: blue; margin-bottom: 10px">📦 INVENTARIO TOTAL</h4>
+          <div id="lista-total"></div>
+        </div>
+      </div>
+
+      <div id="s-caja" class="section">
+        <div class="card">
+          <h3>Caja del día</h3>
+          <div
+            id="total-dia"
+            style="
+              font-size: 32px;
+              color: #27ae60;
+              font-weight: bold;
+              text-align: center;
+              margin: 10px 0;
+            "
+          >
+            $0
+          </div>
+          <div
+            id="resumen-productos"
+            style="margin-bottom: 20px; font-size: 14px; color: #555"
+          ></div>
+          <div id="historial-ventas"></div>
+          <button
+            class="btn"
+            style="background: #e74c3c; margin-top: 20px"
+            onclick="cerrarCaja()"
+          >
+            ⚠️ REINICIAR DÍA
+          </button>
+        </div>
+      </div>
+
+      <div id="s-deudores" class="section">
+        <div class="card">
+          <h3>Deudores</h3>
+          <input
+            type="text"
+            id="bus-deu"
+            placeholder="🔍 Buscar cliente..."
+            onkeyup="filtrarDeudores()"
+            style="border: 2px solid var(--danger); margin-bottom: 15px"
+          />
+          <div id="lista-deudores"></div>
+        </div>
+      </div>
+
+      <div id="s-config" class="section">
+        <div class="card">
+          <h3>Configuración</h3>
+          <button class="btn btn-save" onclick="exportarDatos()">
+            📥 DESCARGAR BACKUP
+          </button>
+          <hr style="margin: 20px 0" />
+          <label>📤 SUBIR COPIA (RESTAURAR):</label>
+          <input type="file" id="file-backup" onchange="importarDatos()" />
+          <hr style="margin: 20px 0" />
+
+          <button
+            id="btn-install"
+            class="btn"
+            style="background: var(--success); display: none"
+          >
+            📲 INSTALAR APP EN MENU
+          </button>
+          <p
+            id="install-text"
+            style="font-size: 12px; color: #666; text-align: center"
+          >
+            Si no ves el botón "Instalar", toca los 3 puntos (⋮) o el botón
+            compartir y selecciona "Agregar a la pantalla de inicio".
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let html5QrCode = null;
+      let deferredPrompt;
+
+      // --- INSTALACIÓN PWA ---
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        const btnInstall = document.getElementById("btn-install");
+        btnInstall.style.display = "flex";
+
+        btnInstall.addEventListener("click", () => {
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === "accepted") {
+              console.log("Mauro aceptó la instalación");
+            }
+            deferredPrompt = null;
+            btnInstall.style.display = "none";
+          });
+        });
+      });
+
+      // --- LÓGICA COMERCIAL ---
+      function controlarLicencia() {
+        let inicio = localStorage.getItem("mm_fecha_inicio");
+        if (!inicio) {
+          inicio = new Date().getTime();
+          localStorage.setItem("mm_fecha_inicio", inicio);
+        }
+        let ahora = new Date().getTime();
+        let sieteDias = 7 * 24 * 60 * 60 * 1000;
+        let transcurrido = ahora - inicio;
+        let diasRestantes = Math.ceil(
+          (sieteDias - transcurrido) / (1000 * 60 * 60 * 24)
+        );
+        if (transcurrido >= sieteDias) {
+          document.getElementById("block-screen").style.display = "flex";
+        } else {
+          document.getElementById("days-left").innerText = diasRestantes;
+        }
+      }
+
+      window.onload = () => {
+        controlarLicencia();
+        setTimeout(() => {
+          document.getElementById("splash").style.display = "none";
+          document.getElementById("main-app").style.display = "block";
+        }, 1500);
+      };
+
+      // --- FUNCIONES DE NAVEGACIÓN Y LOGICA ---
+      function ver(p) {
+        document
+          .querySelectorAll(".section")
+          .forEach((s) => s.classList.remove("active"));
+        document
+          .querySelectorAll(".tab")
+          .forEach((t) => t.classList.remove("active"));
+        document.getElementById("s-" + p).classList.add("active");
+        let btn = document.getElementById("b-" + p.substring(0, 3));
+        if (btn) btn.classList.add("active");
+        if (p === "stock") dibujarStock();
+        if (p === "deudores") dibujarDeudores();
+        if (p === "caja") dibujarCaja();
+      }
+
+      async function activarCamara() {
+        const readerDiv = document.getElementById("reader");
+        readerDiv.style.display = "flex";
+        readerDiv.innerHTML = `<div id="video-container"></div><button class="btn-close-cam" onclick="cerrarLector()">❌ CERRAR CÁMARA</button>`;
+        html5QrCode = new Html5Qrcode("video-container");
+        const config = { fps: 10, qrbox: { width: 300, height: 150 } };
+        try {
+          await html5QrCode.start(
+            { facingMode: "environment" },
+            config,
+            (text) => {
+              document.getElementById("cod").value = text;
+              buscarPorCodigo(text);
+              cerrarLector();
+            }
+          );
+        } catch (err) {
+          alert("Error de cámara");
+          cerrarLector();
+        }
+      }
+
+      function cerrarLector() {
+        if (html5QrCode) {
+          html5QrCode
+            .stop()
+            .then(() => {
+              document.getElementById("reader").style.display = "none";
+              html5QrCode = null;
+            })
+            .catch(() => {
+              document.getElementById("reader").style.display = "none";
+            });
+        }
+      }
+
+      function buscarPorCodigo(codigo) {
+        let s = JSON.parse(localStorage.getItem("mm_s")) || [];
+        let p = s.find((x) => x.cod.trim() === codigo.trim());
+        if (p) {
+          document.getElementById("nom").value = p.nom;
+          document.getElementById("pre").value = p.pre;
+          document.getElementById("can").value = p.can;
+          document.getElementById("vto").value = p.vto || "";
+        } else {
+          let temp = codigo;
+          limpiar();
+          document.getElementById("cod").value = temp;
+        }
+      }
+
+      function buscarManualPorNombre() {
+        let bus = document.getElementById("busqueda").value.toLowerCase();
+        let s = JSON.parse(localStorage.getItem("mm_s")) || [];
+        let p = s.find((x) => x.nom.toLowerCase().includes(bus));
+        if (p) {
+          document.getElementById("cod").value = p.cod;
+          buscarPorCodigo(p.cod);
+        } else {
+          alert("No encontrado");
+        }
+      }
+
+      function btnGuardar() {
+        let c = document.getElementById("cod").value;
+        let n = document.getElementById("nom").value;
+        let p = document.getElementById("pre").value;
+        let q = parseInt(document.getElementById("can").value) || 0;
+        let v = document.getElementById("vto").value;
+        if (!n || !p) return alert("Falta nombre o precio");
+        let s = JSON.parse(localStorage.getItem("mm_s")) || [];
+        let i = s.findIndex((x) => x.cod === c);
+        if (i > -1) s[i] = { cod: c, nom: n, pre: p, can: q, vto: v };
+        else s.push({ cod: c, nom: n, pre: p, can: q, vto: v });
+        localStorage.setItem("mm_s", JSON.stringify(s));
+        alert("¡Guardado!");
+        limpiar();
+      }
+
+      function btnVenta() {
+        let c = document.getElementById("cod").value;
+        let s = JSON.parse(localStorage.getItem("mm_s")) || [];
+        let i = s.findIndex((x) => x.cod === c);
+        if (i > -1 && s[i].can > 0) {
+          s[i].can--;
+          localStorage.setItem("mm_s", JSON.stringify(s));
+          let hoy = JSON.parse(localStorage.getItem("mm_hoy")) || [];
+          hoy.push({
+            nom: s[i].nom,
+            pre: parseFloat(s[i].pre),
+            hora: new Date().toLocaleTimeString(),
+          });
+          localStorage.setItem("mm_hoy", JSON.stringify(hoy));
+          alert("Vendido");
+          limpiar();
+        } else alert("Sin stock");
+      }
+
+      function consumoInterno() {
+        let c = document.getElementById("cod").value;
+        let s = JSON.parse(localStorage.getItem("mm_s")) || [];
+        let i = s.findIndex((x) => x.cod === c);
+        if (i > -1 && s[i].can > 0) {
+          if (confirm("¿Consumo interno?")) {
+            s[i].can--;
+            localStorage.setItem("mm_s", JSON.stringify(s));
+            limpiar();
+          }
+        }
+      }
+
+      function dibujarStock() {
+        let s = JSON.parse(localStorage.getItem("mm_s")) || [];
+        let cT = document.getElementById("lista-total");
+        let cB = document.getElementById("lista-baja");
+        cT.innerHTML = "";
+        cB.innerHTML = "";
+        s.forEach((p, idx) => {
+          let critico = p.can < 5;
+          let html = `<div class="item item-stock" data-nom="${p.nom.toLowerCase()}" style="border-left:5px solid ${
+            critico ? "#e74c3c" : "#27ae60"
+          }; padding-left:10px;">
+              <div><strong>${p.nom}</strong><br><small>$${p.pre} | Stock: ${
+            p.can
+          }</small></div>
+              <div><button onclick="ajustarStock(${idx},-1)">-</button><button onclick="ajustarStock(${idx},1)">+</button></div>
+            </div>`;
+          cT.innerHTML += html;
+          if (critico) cB.innerHTML += html;
+        });
+      }
+
+      function ajustarStock(i, cant) {
+        let s = JSON.parse(localStorage.getItem("mm_s"));
+        if (s[i].can + cant >= 0) {
+          s[i].can += cant;
+          localStorage.setItem("mm_s", JSON.stringify(s));
+          dibujarStock();
+        }
+      }
+
+      function dibujarCaja() {
+        let h = JSON.parse(localStorage.getItem("mm_hoy")) || [];
+        let tot = h.reduce((a, b) => a + b.pre, 0);
+        document.getElementById("total-dia").innerText = "$" + tot.toFixed(2);
+        document.getElementById("historial-ventas").innerHTML = h
+          .map(
+            (v) =>
+              `<div class="item"><span>${v.hora} - ${v.nom}</span><b>$${v.pre}</b></div>`
+          )
+          .join("");
+      }
+
+      function cerrarCaja() {
+        if (confirm("¿Reiniciar día?")) {
+          localStorage.removeItem("mm_hoy");
+          dibujarCaja();
+        }
+      }
+
+      function filtrarStock() {
+        let f = document.getElementById("bus-stock").value.toLowerCase();
+        document
+          .querySelectorAll(".item-stock")
+          .forEach(
+            (i) =>
+              (i.style.display = i.getAttribute("data-nom").includes(f)
+                ? "flex"
+                : "none")
+          );
+      }
+
+      function exportarDatos() {
+        let d = {
+          s: localStorage.getItem("mm_s"),
+          d: localStorage.getItem("mm_d"),
+          h: localStorage.getItem("mm_hoy"),
+        };
+        let a = document.createElement("a");
+        a.href = URL.createObjectURL(
+          new Blob([JSON.stringify(d)], { type: "application/json" })
+        );
+        a.download = "backup_negocio.json";
+        a.click();
+      }
+
+      function importarDatos() {
+        let f = document.getElementById("file-backup").files[0];
+        let r = new FileReader();
+        r.onload = (e) => {
+          let d = JSON.parse(e.target.result);
+          localStorage.setItem("mm_s", d.s);
+          localStorage.setItem("mm_d", d.d);
+          localStorage.setItem("mm_hoy", d.h);
+          location.reload();
+        };
+        r.readAsText(f);
+      }
+
+      function btnFiado() {
+        let n = document.getElementById("nom").value;
+        let p = document.getElementById("pre").value;
+        if (!n) return alert("Seleccioná producto");
+        let cli = prompt("¿A quién anotamos?");
+        if (cli) {
+          let d = JSON.parse(localStorage.getItem("mm_d")) || {};
+          d[cli] = (d[cli] || 0) + parseFloat(p);
+          localStorage.setItem("mm_d", JSON.stringify(d));
+          limpiar();
+        }
+      }
+
+      function dibujarDeudores() {
+        let d = JSON.parse(localStorage.getItem("mm_d")) || {};
+        let cont = document.getElementById("lista-deudores");
+        cont.innerHTML = Object.keys(d)
+          .map((n) =>
+            d[n] > 0
+              ? `<div class="item"><span>${n}: $${d[n]}</span><button onclick="pagar('${n}')">PAGÓ</button></div>`
+              : ""
+          )
+          .join("");
+      }
+
+      function pagar(n) {
+        let d = JSON.parse(localStorage.getItem("mm_d"));
+        let p = prompt("¿Cuánto paga " + n + "?");
+        if (p) {
+          d[n] -= parseFloat(p);
+          localStorage.setItem("mm_d", JSON.stringify(d));
+          dibujarDeudores();
+        }
+      }
+
+      function limpiar() {
+        ["cod", "nom", "pre", "can", "vto"].forEach(
+          (id) => (document.getElementById(id).value = "")
+        );
+      }
+    </script>
+  </body>
+</html>
