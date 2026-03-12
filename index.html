@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -307,6 +307,9 @@
         <button id="b-deu" class="tab" onclick="ver('deudores')">DEUDA</button>
         <button id="b-caj" class="tab" onclick="ver('caja')">CAJA</button>
         <button id="b-ayu" class="tab" onclick="ver('ayuda')">AYUDA</button>
+        <button id="b-cli" class="tab" onclick="ver('clientes')">
+          CLIENTES
+        </button>
         <button id="b-cfg" class="tab" onclick="ver('config')">⚙️</button>
       </div>
 
@@ -411,17 +414,100 @@
               padding-bottom: 5px;
             "
           >
-            📖 Manual de Uso
+            📖 Manual de Uso Rapido
           </h3>
-          <div class="faq-item">
-            <span class="faq-question" onclick="toggleFaq(this)"
-              >❓ ¿Cómo envío el ticket de WhatsApp?</span
+
+          <div style="text-align: left; margin-top: 10px">
+            <details
+              style="
+                margin-bottom: 10px;
+                background: #f9f9f9;
+                padding: 10px;
+                border-radius: 5px;
+              "
             >
-            <p class="faq-answer">
-              Al terminar una compra en el carrito (Cobrar o Fiar), la app te
-              preguntará si quieres enviar el ticket. Si aceptas, abrirá
-              WhatsApp para que elijas al cliente.
-            </p>
+              <summary style="font-weight: bold; cursor: pointer">
+                📦 ¿Cómo cargo stock?
+              </summary>
+              <p style="font-size: 14px; margin-top: 5px">
+                En la pantalla principal vas a escanear el codigo de barras<b
+                ></b>, agrega el nombre, precio, cantidad y vencimiento. Dale a
+                <b>ACTUALIZAR/CARGAR</b>. Si el producto ya existe, se suma al
+                stock actual.
+              </p>
+            </details>
+
+            <details
+              style="
+                margin-bottom: 10px;
+                background: #f9f9f9;
+                padding: 10px;
+                border-radius: 5px;
+              "
+            >
+              <summary style="font-weight: bold; cursor: pointer">
+                👤 ¿Cómo fío a un cliente?
+              </summary>
+              <p style="font-size: 14px; margin-top: 5px">
+                En el carrito, elegí el nombre del cliente en el buscador blanco
+                y tocá el botón rojo <b>FIAR</b>. La deuda se guarda sola en la
+                pestaña <b>DEUDA</b>.
+              </p>
+            </details>
+
+            <details
+              style="
+                margin-bottom: 10px;
+                background: #f9f9f9;
+                padding: 10px;
+                border-radius: 5px;
+              "
+            >
+              <summary style="font-weight: bold; cursor: pointer">
+                📲 ¿WhatsApp y Tickets?
+              </summary>
+              <p style="font-size: 14px; margin-top: 5px">
+                Al cobrar o fiar, la app te pregunta si querés enviar el ticket.
+                Si el cliente tiene su celular guardado en <b>CLIENTES</b>, se
+                abre su chat directo.
+              </p>
+            </details>
+
+            <details
+              style="
+                margin-bottom: 10px;
+                background: #f9f9f9;
+                padding: 10px;
+                border-radius: 5px;
+              "
+            >
+              <summary style="font-weight: bold; cursor: pointer">
+                💰 ¿Cómo ver lo que vendí hoy?
+              </summary>
+              <p style="font-size: 14px; margin-top: 5px">
+                Entrá a la pestaña <b>CAJA</b>. Ahí vas a ver el listado de cada
+                venta del día y el total de plata que deberías tener en mano.
+              </p>
+            </details>
+
+            <details
+              style="
+                margin-bottom: 10px;
+                background: #f9f9f9;
+                padding: 10px;
+                border-radius: 5px;
+              "
+            >
+              <summary style="font-weight: bold; cursor: pointer">
+                🔄 ¿Cómo cobrar una deuda?
+              </summary>
+              <p style="font-size: 14px; margin-top: 5px">
+                Vas a <b>DEUDA</b>, buscás al cliente y tocás
+                <b>COBRAR DEUDA</b>. El sistema limpia su cuenta y la pone en
+                $0. En caso que no te pague la totalidad, se restará lo que te
+                abone.
+              </p>
+            </details>
           </div>
         </div>
       </div>
@@ -437,7 +523,41 @@
           <input type="file" id="file-backup" onchange="importarDatos()" />
         </div>
       </div>
+      <div id="s-clientes" class="section">
+        <div class="card">
+          <h3
+            style="
+              color: var(--primary);
+              border-bottom: 2px solid var(--primary);
+              padding-bottom: 5px;
+            "
+          >
+            👥 Registro de Clientes
+          </h3>
 
+          <label>NOMBRE COMPLETO</label>
+          <input type="text" id="cli-nom" placeholder="Ej: Mauro Ledezma" />
+
+          <label>WHATSAPP (Sin el +, ej: 543794808890)</label>
+          <input
+            type="number"
+            id="cli-tel"
+            placeholder="Código de área + número"
+          />
+
+          <button class="btn btn-save" onclick="guardarCliente()">
+            💾 GUARDAR EN AGENDA
+          </button>
+        </div>
+
+        <div class="card">
+          <h4 style="margin-top: 0">Agenda de Contactos</h4>
+          <div
+            id="lista-agenda"
+            style="max-height: 300px; overflow-y: auto"
+          ></div>
+        </div>
+      </div>
       <button
         class="btn"
         style="background: #2c3e50; margin-bottom: 10px"
@@ -477,6 +597,16 @@
             style="padding: 10px; font-size: 12px"
             onclick="finalizarCompra('efectivo')"
           >
+            <label>SELECCIONAR CLIENTE</label>
+            <select
+              id="select-cliente-venta"
+              style="
+                padding: 12px;
+                border-radius: 6px;
+                width: 100%;
+                margin-bottom: 10px;
+              "
+            ></select>
             💰 COBRAR
           </button>
           <button
@@ -509,6 +639,26 @@
     </div>
 
     <script>
+      function actualizarSelectClientes() {
+        const selector = document.getElementById("select-cliente-venta");
+        if (!selector) return;
+
+        // Traemos la agenda de clientes
+        let agenda = JSON.parse(localStorage.getItem("mm_clientes")) || [];
+
+        // Limpiamos y ponemos el cliente por defecto
+        selector.innerHTML =
+          '<option value="Consumidor Final" data-tel="">👤 Consumidor Final</option>';
+
+        // Llenamos con los clientes que guardaste
+        agenda.forEach((c) => {
+          let option = document.createElement("option");
+          option.value = c.nom;
+          option.textContent = c.nom;
+          option.setAttribute("data-tel", c.tel || ""); // Guardamos el tel acá para el WhatsApp
+          selector.appendChild(option);
+        });
+      }
       let html5QrCode = null;
       let carrito = [];
 
@@ -541,7 +691,7 @@
           localStorage.setItem("mm_fecha_inicio", inicio);
         }
         let ahora = new Date().getTime();
-        let sieteDias = 7 * 24 * 60 * 60 * 1000;
+        let sieteDias = 10 * 24 * 60 * 60 * 1000;
         let transcurrido = ahora - inicio;
         if (transcurrido >= sieteDias) {
           document.getElementById("block-screen").style.display = "flex";
@@ -570,9 +720,13 @@
         document.getElementById("s-" + p).classList.add("active");
         let btn = document.getElementById("b-" + p.substring(0, 3));
         if (btn) btn.classList.add("active");
+
         if (p === "stock") dibujarStock();
         if (p === "deudores") dibujarDeudores();
         if (p === "caja") dibujarCaja();
+
+        // AGREGÁ ESTA LÍNEA AQUÍ:
+        if (p === "clientes") dibujarAgenda();
       }
 
       async function activarCamara() {
@@ -818,22 +972,27 @@
 
       function finalizarCompra(metodo) {
         if (carrito.length === 0) return;
+
+        let selector = document.getElementById("select-cliente-venta");
+        let clienteNom = selector.value;
+        let clienteTel =
+          selector.options[selector.selectedIndex].getAttribute("data-tel");
+
+        // Validación para fiados
+        if (metodo === "fiado" && clienteNom === "Consumidor Final") {
+          return alert("Para fiar, debés seleccionar un cliente de la agenda.");
+        }
+
         let s = JSON.parse(localStorage.getItem("mm_s")) || [];
         let hoy = JSON.parse(localStorage.getItem("mm_hoy")) || [];
         let deudores = JSON.parse(localStorage.getItem("mm_d")) || {};
-        let cliente = "Consumidor Final";
         let total = 0;
-
-        if (metodo === "fiado") {
-          cliente = prompt("¿A nombre de quién fiamos?");
-          if (!cliente) return;
-        }
 
         let textoTicket = `*M&M GESTIÓN PRO*\n`;
         textoTicket += `--------------------------\n`;
         textoTicket += `Fecha: ${new Date().toLocaleDateString()}\n`;
         textoTicket += `Hora: ${new Date().toLocaleTimeString()}\n`;
-        textoTicket += `Cliente: ${cliente}\n`;
+        textoTicket += `Cliente: ${clienteNom}\n`;
         textoTicket += `Tipo: ${
           metodo === "efectivo" ? "PAGO EFECTIVO" : "A CUENTA (FIADO)"
         }\n`;
@@ -841,7 +1000,7 @@
 
         carrito.forEach((item) => {
           total += item.pre;
-          textoTicket += `- ${item.nom}: $${item.pre}\n`;
+          textoTicket += `- ${item.nom}: $${item.pre.toFixed(2)}\n`;
           let i = s.findIndex((x) => x.cod === item.cod && x.nom === item.nom);
           if (i > -1) s[i].can = Math.max(0, s[i].can - 1);
           if (metodo === "efectivo") {
@@ -854,32 +1013,27 @@
         });
 
         if (metodo === "fiado")
-          deudores[cliente] = (deudores[cliente] || 0) + total;
+          deudores[clienteNom] = (deudores[clienteNom] || 0) + total;
 
         textoTicket += `--------------------------\n`;
         textoTicket += `*TOTAL: $${total.toFixed(2)}*\n\n`;
-        textoTicket += `¡Gracias por su compra!`;
+        textoTicket += `¡Gracias por su compra en M&M!`;
 
         localStorage.setItem("mm_s", JSON.stringify(s));
-        if (metodo === "efectivo")
-          localStorage.setItem("mm_hoy", JSON.stringify(hoy));
-        if (metodo === "fiado")
-          localStorage.setItem("mm_d", JSON.stringify(deudores));
+        localStorage.setItem("mm_hoy", JSON.stringify(hoy));
+        localStorage.setItem("mm_d", JSON.stringify(deudores));
 
         if (confirm("¿Deseas enviar el Ticket por WhatsApp?")) {
-          let url =
-            "https://api.whatsapp.com/send?text=" +
-            encodeURIComponent(textoTicket);
-          window.open(url, "_blank");
-        } else {
-          alert("Venta registrada con éxito.");
+          let linkWA = clienteTel
+            ? `https://api.whatsapp.com/send?phone=${clienteTel}&text=`
+            : `https://api.whatsapp.com/send?text=`;
+          window.open(linkWA + encodeURIComponent(textoTicket), "_blank");
         }
 
         carrito = [];
         actualizarVistaCarrito();
         verificarAlertas();
       }
-
       function verHistorialCompleto() {
         let fecha = prompt("Ingresá la fecha (DD/MM/AAAA)");
         if (!fecha) return;
@@ -894,6 +1048,79 @@
               filtrado.reduce((a, b) => a + b.pre, 0).toFixed(2)
           );
       }
+      // --- LÓGICA DE LA AGENDA DE CLIENTES ---
+
+      function guardarCliente() {
+        let n = document.getElementById("cli-nom").value.trim();
+        let t = document.getElementById("cli-tel").value.trim();
+
+        if (!n) return alert("¡Ey! El nombre del cliente es obligatorio.");
+
+        // Traemos los clientes que ya existan o creamos una lista vacía
+        let clis = JSON.parse(localStorage.getItem("mm_clis")) || [];
+
+        // Agregamos el nuevo cliente
+        clis.push({ nom: n, tel: t });
+
+        // Guardamos la lista actualizada
+        localStorage.setItem("mm_clis", JSON.stringify(clis));
+
+        // Limpiamos los campos y refrescamos la lista visual
+        document.getElementById("cli-nom").value = "";
+        document.getElementById("cli-tel").value = "";
+        dibujarAgenda();
+
+        alert("✅ " + n + " guardado correctamente.");
+      }
+
+      function dibujarAgenda() {
+        let clis = JSON.parse(localStorage.getItem("mm_clis")) || [];
+        let contenedor = document.getElementById("lista-agenda");
+
+        if (clis.length === 0) {
+          contenedor.innerHTML =
+            "<p style='color:#888; text-align:center;'>No hay clientes guardados.</p>";
+          return;
+        }
+
+        // Dibujamos cada cliente con el mismo estilo de tus otros items
+        contenedor.innerHTML = clis
+          .map(
+            (c, index) => `
+    <div class="item">
+      <span><strong>${c.nom}</strong></span>
+      <span style="color: var(--primary); font-size: 14px;">${
+        c.tel ? "📱 " + c.tel : "<i>Sin cel</i>"
+      }</span>
+    </div>
+  `
+          )
+          .join("");
+      }
+      function actualizarSelectClientes() {
+        let clis = JSON.parse(localStorage.getItem("mm_clis")) || [];
+        let sel = document.getElementById("select-cliente-venta");
+
+        // Dejamos "Consumidor Final" por defecto
+        sel.innerHTML =
+          '<option value="Consumidor Final" data-tel="">👤 Consumidor Final</option>';
+
+        // Agregamos a los clientes de tu agenda
+        clis.forEach((c) => {
+          sel.innerHTML += `<option value="${c.nom}" data-tel="${c.tel}">${c.nom}</option>`;
+        });
+      }
+      // Función para avisar que se puede instalar
+      window.addEventListener("load", () => {
+        // Solo mostramos el aviso si NO está ya instalada
+        if (!window.matchMedia("(display-mode: standalone)").matches) {
+          setTimeout(() => {
+            alert(
+              "💡 ¡TIP DE M&M!:\nPara usar esto como una App, tocá los 3 puntitos de tu navegador y elegí 'Instalar aplicación' o 'Agregar a la pantalla de inicio'."
+            );
+          }, 3000); // Aparece a los 3 segundos de entrar
+        }
+      });
     </script>
   </body>
 </html>
