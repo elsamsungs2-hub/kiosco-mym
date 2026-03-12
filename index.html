@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -16,7 +16,7 @@
 
     <link
       rel="manifest"
-      href="data:application/manifest+json;base64,ewogICJuYW1lIjogIktpb3NjbyBNJk0iLAogICJzaG9ydF9uYW1lIjogIk0mTSIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjZjRmNmg4IiwKICAidGhlbWVfY29sb3IiOiAiIzM5NDlhYiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImh0dHBzOi8vaS5pYmIuY28vajlmUjdCeC9TY3JlZW5zaG90LTIwMjYwMzExLTEwNTUzNi1XaGF0c0FwcC1CdXNpbmVzcy5qcGciLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL2pwZWciCiAgICB9CiAgXQp9"
+      href="data:application/manifest+json;base64,ewogICJuYW1lIjogIktpb3NjbyBNJk0iLAogICJzaG9ydF9uYW1lIjogIk0mTSIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAmZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjZjRmNmg4IiwKICAidGhlbWVfY29sb3IiOiAiIzM5NDlhYiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImh0dHBzOi8vaS5pYmIuY28vajlmUjdCeC9TY3JlZW5zaG90LTIwMjYwMzExLTEwNTUzNi1XaGF0c0FwcC1CdXNpbmVzcy5qcGciLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL2pwZWciCiAgICB9CiAgXQp9"
     />
 
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -266,6 +266,26 @@
     <div id="alerta-stock" onclick="ver('stock')">
       ⚠️ REPONER PRODUCTOS (STOCK CRÍTICO)
     </div>
+    <div
+      id="alerta-vencimiento"
+      style="
+        display: none;
+        background: #f39c12;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        font-weight: bold;
+        width: 100%;
+        position: sticky;
+        top: 60px;
+        z-index: 998;
+        cursor: pointer;
+        font-size: 14px;
+      "
+      onclick="ver('stock')"
+    >
+      🍞 PRODUCTOS POR VENCER
+    </div>
 
     <div id="block-screen">
       <div style="font-size: 60px; margin-bottom: 20px">🔒</div>
@@ -319,13 +339,13 @@
           </div>
           <label>FECHA DE VENCIMIENTO</label><input type="date" id="vto" />
           <button class="btn btn-venta" onclick="btnVenta()">
-            🛒 REGISTRAR VENTA
+            🛒 VENTA RÁPIDA (1)
           </button>
           <button class="btn btn-save" onclick="btnGuardar()">
             📥 ACTUALIZAR / CARGAR
           </button>
           <button class="btn btn-fiado" onclick="btnFiado()">
-            👤 ANOTAR FIADO
+            👤 FIADO RÁPIDO
           </button>
           <button class="btn btn-purple" onclick="consumoInterno()">
             🍴 CONSUMO INTERNO (-1)
@@ -372,6 +392,13 @@
           >
             REINICIAR DÍA
           </button>
+          <button
+            class="btn btn-save"
+            style="margin-top: 10px; background: #607d8b"
+            onclick="verHistorialCompleto()"
+          >
+            📊 VER HISTORIAL POR FECHA
+          </button>
         </div>
       </div>
 
@@ -386,119 +413,16 @@
           >
             📖 Manual de Uso
           </h3>
-
           <div class="faq-item">
             <span class="faq-question" onclick="toggleFaq(this)"
-              >❓ ¿Cómo registro una venta rápido?</span
+              >❓ ¿Cómo envío el ticket de WhatsApp?</span
             >
             <p class="faq-answer">
-              Buscá el producto (escaneando o por nombre). Cuando aparezcan los
-              datos en los cuadros, tocá el botón verde
-              <b>"REGISTRAR VENTA"</b>. Eso resta 1 del stock y suma la plata a
-              la caja automáticamente.
+              Al terminar una compra en el carrito (Cobrar o Fiar), la app te
+              preguntará si quieres enviar el ticket. Si aceptas, abrirá
+              WhatsApp para que elijas al cliente.
             </p>
           </div>
-
-          <div class="faq-item">
-            <span class="faq-question" onclick="toggleFaq(this)"
-              >❓ ¿Cómo cargo un producto que no tiene código?</span
-            >
-            <p class="faq-answer">
-              Escribí el nombre directamente en el cuadro "PRODUCTO", poné el
-              precio y el stock, y dale al botón azul
-              <b>"ACTUALIZAR / CARGAR"</b>. Para venderlo después, lo buscás por
-              nombre arriba.
-            </p>
-          </div>
-
-          <div class="faq-item">
-            <span class="faq-question" onclick="toggleFaq(this)"
-              >❓ ¿Qué hago si un cliente me debe (Fiado)?</span
-            >
-            <p class="faq-answer">
-              Buscá el producto, y en lugar de "Venta", tocá
-              <b>"ANOTAR FIADO"</b>. Poné el nombre del cliente y listo. Podés
-              ver cuánto te debe cada uno en la pestaña <b>DEUDA</b>.
-            </p>
-          </div>
-
-          <div class="faq-item">
-            <span class="faq-question" onclick="toggleFaq(this)"
-              >❓ Un deudor me pagó una parte, ¿cómo lo anoto?</span
-            >
-            <p class="faq-answer">
-              Andá a la pestaña <b>DEUDA</b>, buscá al cliente y tocá
-              <b>"PAGÓ"</b>. La app te pregunta cuánto. Si ponés el monto total,
-              se borra de la lista; si ponés menos (ej. me debía 1000 y me dio
-              500), la cuenta se actualiza sola.
-            </p>
-          </div>
-
-          <div class="faq-item">
-            <span class="faq-question" onclick="toggleFaq(this)"
-              >❓ ¿Para qué sirve el botón morado "Consumo Interno"?</span
-            >
-            <p class="faq-answer">
-              Usalo cuando vos (o alguien del negocio) saca algo para consumir.
-              Resta el stock para que el inventario sea real, pero
-              <b>NO suma plata a la caja</b> porque no hubo entrada de dinero.
-            </p>
-          </div>
-
-          <div class="faq-item">
-            <span class="faq-question" onclick="toggleFaq(this)"
-              >❓ ¿Cómo limpio la caja al final del día?</span
-            >
-            <p class="faq-answer">
-              En la pestaña <b>CAJA</b>, anotá el total en tu cuaderno y tocá
-              <b>"REINICIAR DÍA"</b>. Eso borra el historial de ventas del día y
-              deja el contador en $0 para mañana.
-            </p>
-          </div>
-
-          <div class="faq-item">
-            <span class="faq-question" onclick="toggleFaq(this)"
-              >❓ La cámara no abre o no escanea</span
-            >
-            <p class="faq-answer">
-              1. Limpiá el lente. <br />2. Asegurate de que haya buena luz.
-              <br />3. Si el código está roto, escribí el nombre arriba en la
-              lupa y buscalo manualmente.
-            </p>
-          </div>
-
-          <div class="faq-item">
-            <span class="faq-question" onclick="toggleFaq(this)"
-              >⚠️ IMPORTANTE: ¿Se pueden borrar mis datos?</span
-            >
-            <p class="faq-answer">
-              Los datos se guardan en este teléfono.
-              <b>NO borres el historial de Chrome/Safari</b> y no uses apps de
-              "limpieza profunda", porque podrías borrar el inventario. <br /><b
-                >CONSEJO:</b
-              >
-              Una vez por semana, andá a la ⚙️ y dale a "DESCARGAR BACKUP".
-            </p>
-          </div>
-
-          <div class="faq-item">
-            <span class="faq-question" onclick="toggleFaq(this)"
-              >❓ Cambié el celular, ¿cómo paso todo?</span
-            >
-            <p class="faq-answer">
-              En el celu viejo: ⚙️ -> <b>DESCARGAR BACKUP</b> (mandátelo por
-              WhatsApp). <br />En el celu nuevo: ⚙️ -> <b>SUBIR COPIA</b> y
-              elegí ese archivo. ¡Listo!
-            </p>
-          </div>
-          <p
-            style="
-              font-size: 11px;
-              color: #888;
-              text-align: center;
-              margin-top: 15px;
-            "
-          ></p>
         </div>
       </div>
 
@@ -514,8 +438,67 @@
         </div>
       </div>
 
+      <button
+        class="btn"
+        style="background: #2c3e50; margin-bottom: 10px"
+        onclick="agregarAlCarrito()"
+      >
+        ➕ AGREGAR AL CARRITO
+      </button>
+
+      <div
+        id="carrito-display"
+        style="
+          display: none;
+          background: #fffde7;
+          border: 2px dashed #fbc02d;
+          padding: 10px;
+          border-radius: 10px;
+          margin-bottom: 15px;
+        "
+      >
+        <h4 style="margin: 0; color: #f39c12; font-size: 14px">
+          🛒 Carrito Actual
+        </h4>
+        <div id="lista-carrito" style="font-size: 13px; margin: 10px 0"></div>
+        <div
+          style="
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+          "
+        >
+          TOTAL: $<span id="total-carrito-monto">0</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px">
+          <button
+            class="btn btn-venta"
+            style="padding: 10px; font-size: 12px"
+            onclick="finalizarCompra('efectivo')"
+          >
+            💰 COBRAR
+          </button>
+          <button
+            class="btn btn-fiado"
+            style="padding: 10px; font-size: 12px"
+            onclick="finalizarCompra('fiado')"
+          >
+            👤 FIAR
+          </button>
+        </div>
+        <button
+          class="btn"
+          style="background: #ccc; color: black; font-size: 10px; padding: 5px"
+          onclick="vaciarCarrito()"
+        >
+          CANCELAR TODO
+        </button>
+      </div>
+
+      <hr style="border: 0; border-top: 1px solid #eee; margin-bottom: 15px" />
       <div class="footer-credits">
-        M&M Gestión Pro v1.0 - Empedrado<br />
+        M&M Gestión Pro v1.1 - Empedrado<br />
         Desarrollado por
         <a
           href="https://www.linkedin.com/in/hugo-orlando-p%C3%A9rez-b65551b0"
@@ -527,19 +510,30 @@
 
     <script>
       let html5QrCode = null;
+      let carrito = [];
+
       function toggleFaq(el) {
         const ans = el.nextElementSibling;
         ans.style.display = ans.style.display === "block" ? "none" : "block";
       }
+
       function verificarAlertas() {
         let s = JSON.parse(localStorage.getItem("mm_s")) || [];
+        let ahora = new Date();
+        let enSieteDias = new Date();
+        enSieteDias.setDate(ahora.getDate() + 7);
         let faltantes = s.filter((p) => p.can <= 2);
-        let banner = document.getElementById("alerta-stock");
-        if (faltantes.length > 0) {
-          banner.style.display = "block";
-          banner.innerHTML = `⚠️ REPONER: ${faltantes.length} PRODUCTOS EN CRÍTICO`;
-        } else banner.style.display = "none";
+        let bannerStock = document.getElementById("alerta-stock");
+        if (bannerStock) {
+          if (faltantes.length > 0) {
+            bannerStock.style.display = "block";
+            bannerStock.innerHTML = `⚠️ REPONER: ${faltantes.length} PRODUCTOS EN CRÍTICO`;
+          } else {
+            bannerStock.style.display = "none";
+          }
+        }
       }
+
       function controlarLicencia() {
         let inicio = localStorage.getItem("mm_fecha_inicio");
         if (!inicio) {
@@ -552,11 +546,14 @@
         if (transcurrido >= sieteDias) {
           document.getElementById("block-screen").style.display = "flex";
         } else {
-          document.getElementById("days-left").innerText = Math.ceil(
-            (sieteDias - transcurrido) / (1000 * 60 * 60 * 24)
-          );
+          let sl = document.getElementById("days-left");
+          if (sl)
+            sl.innerText = Math.ceil(
+              (sieteDias - transcurrido) / (1000 * 60 * 60 * 24)
+            );
         }
       }
+
       window.onload = () => {
         controlarLicencia();
         verificarAlertas();
@@ -565,6 +562,7 @@
           document.getElementById("main-app").style.display = "block";
         }, 1500);
       };
+
       function ver(p) {
         document
           .querySelectorAll(".section, .tab")
@@ -576,6 +574,7 @@
         if (p === "deudores") dibujarDeudores();
         if (p === "caja") dibujarCaja();
       }
+
       async function activarCamara() {
         const readerDiv = document.getElementById("reader");
         readerDiv.style.display = "flex";
@@ -591,12 +590,14 @@
           }
         );
       }
+
       function cerrarLector() {
         if (html5QrCode)
           html5QrCode.stop().then(() => {
             document.getElementById("reader").style.display = "none";
           });
       }
+
       function buscarPorCodigo(codigo) {
         let s = JSON.parse(localStorage.getItem("mm_s")) || [];
         let p = s.find((x) => x.cod.trim() === codigo.trim());
@@ -610,6 +611,7 @@
           document.getElementById("cod").value = codigo;
         }
       }
+
       function buscarManualPorNombre() {
         let bus = document.getElementById("busqueda").value.toLowerCase();
         if (bus.length < 2) return;
@@ -617,6 +619,7 @@
         let p = s.find((x) => x.nom.toLowerCase().includes(bus));
         if (p) buscarPorCodigo(p.cod);
       }
+
       function btnGuardar() {
         let c = document.getElementById("cod").value,
           n = document.getElementById("nom").value,
@@ -633,17 +636,13 @@
         alert("¡Guardado!");
         limpiar();
       }
+
       function btnVenta() {
         let c = document.getElementById("cod").value;
         let s = JSON.parse(localStorage.getItem("mm_s")) || [];
         let i = s.findIndex((x) => x.cod === c);
         if (i > -1 && s[i].can > 0) {
           s[i].can--;
-          if (s[i].can <= 2) {
-            new Audio(
-              "https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
-            ).play();
-          }
           localStorage.setItem("mm_s", JSON.stringify(s));
           let hoy = JSON.parse(localStorage.getItem("mm_hoy")) || [];
           hoy.push({
@@ -653,10 +652,11 @@
           });
           localStorage.setItem("mm_hoy", JSON.stringify(hoy));
           verificarAlertas();
-          alert("Vendido");
+          alert("Venta rápida realizada");
           limpiar();
-        } else alert("Sin stock");
+        } else alert("Sin stock o no seleccionado");
       }
+
       function consumoInterno() {
         let c = document.getElementById("cod").value;
         let s = JSON.parse(localStorage.getItem("mm_s")) || [];
@@ -670,6 +670,7 @@
           }
         }
       }
+
       function dibujarStock() {
         let s = JSON.parse(localStorage.getItem("mm_s")) || [];
         let cT = document.getElementById("lista-total"),
@@ -682,6 +683,7 @@
           if (p.can <= 2) cB.innerHTML += html;
         });
       }
+
       function dibujarCaja() {
         let h = JSON.parse(localStorage.getItem("mm_hoy")) || [];
         let tot = h.reduce((a, b) => a + b.pre, 0);
@@ -693,12 +695,14 @@
           )
           .join("");
       }
+
       function cerrarCaja() {
         if (confirm("¿Reiniciar día?")) {
           localStorage.removeItem("mm_hoy");
           dibujarCaja();
         }
       }
+
       function btnFiado() {
         let n = document.getElementById("nom").value,
           p = document.getElementById("pre").value;
@@ -712,16 +716,20 @@
           limpiar();
         }
       }
+
       function dibujarDeudores() {
         let d = JSON.parse(localStorage.getItem("mm_d")) || {};
         document.getElementById("lista-deudores").innerHTML = Object.keys(d)
           .map((n) =>
             d[n] > 0
-              ? `<div class="item"><span>${n}: $${d[n]}</span><button onclick="pagar('${n}')">PAGÓ</button></div>`
+              ? `<div class="item"><span>${n}: $${d[n].toFixed(
+                  2
+                )}</span><button onclick="pagar('${n}')">PAGÓ</button></div>`
               : ""
           )
           .join("");
       }
+
       function pagar(n) {
         let d = JSON.parse(localStorage.getItem("mm_d")),
           p = prompt("¿Cuánto paga " + n + "?");
@@ -731,11 +739,13 @@
           dibujarDeudores();
         }
       }
+
       function exportarDatos() {
         let d = {
           s: localStorage.getItem("mm_s"),
           d: localStorage.getItem("mm_d"),
           h: localStorage.getItem("mm_hoy"),
+          hist: localStorage.getItem("mm_historial"),
         };
         let a = document.createElement("a");
         a.href = URL.createObjectURL(
@@ -744,6 +754,7 @@
         a.download = "backup_negocio.json";
         a.click();
       }
+
       function importarDatos() {
         let f = document.getElementById("file-backup").files[0],
           r = new FileReader();
@@ -752,14 +763,136 @@
           localStorage.setItem("mm_s", d.s);
           localStorage.setItem("mm_d", d.d);
           localStorage.setItem("mm_hoy", d.h);
+          localStorage.setItem("mm_historial", d.hist || "[]");
           location.reload();
         };
         r.readAsText(f);
       }
+
       function limpiar() {
         ["cod", "nom", "pre", "can", "vto"].forEach(
           (id) => (document.getElementById(id).value = "")
         );
+      }
+
+      // --- FUNCIONES CARRITO & WHATSAPP ---
+
+      function agregarAlCarrito() {
+        let c = document.getElementById("cod").value,
+          n = document.getElementById("nom").value,
+          p = parseFloat(document.getElementById("pre").value);
+        if (!n || isNaN(p)) return alert("Buscá un producto primero");
+        carrito.push({ cod: c, nom: n, pre: p });
+        actualizarVistaCarrito();
+        limpiar();
+      }
+
+      function actualizarVistaCarrito() {
+        let box = document.getElementById("carrito-display"),
+          lista = document.getElementById("lista-carrito"),
+          mnt = document.getElementById("total-carrito-monto");
+        if (carrito.length === 0) {
+          box.style.display = "none";
+          return;
+        }
+        box.style.display = "block";
+        lista.innerHTML = "";
+        let total = 0;
+        carrito.forEach((prod, index) => {
+          total += prod.pre;
+          lista.innerHTML += `<div class="item"><span>${prod.nom}</span><b>$${prod.pre} <span onclick="quitarDelCarrito(${index})" style="color:red; cursor:pointer">[X]</span></b></div>`;
+        });
+        mnt.innerText = total.toFixed(2);
+      }
+
+      function quitarDelCarrito(index) {
+        carrito.splice(index, 1);
+        actualizarVistaCarrito();
+      }
+      function vaciarCarrito() {
+        if (confirm("¿Borrar carrito?")) {
+          carrito = [];
+          actualizarVistaCarrito();
+        }
+      }
+
+      function finalizarCompra(metodo) {
+        if (carrito.length === 0) return;
+        let s = JSON.parse(localStorage.getItem("mm_s")) || [];
+        let hoy = JSON.parse(localStorage.getItem("mm_hoy")) || [];
+        let deudores = JSON.parse(localStorage.getItem("mm_d")) || {};
+        let cliente = "Consumidor Final";
+        let total = 0;
+
+        if (metodo === "fiado") {
+          cliente = prompt("¿A nombre de quién fiamos?");
+          if (!cliente) return;
+        }
+
+        let textoTicket = `*M&M GESTIÓN PRO*\n`;
+        textoTicket += `--------------------------\n`;
+        textoTicket += `Fecha: ${new Date().toLocaleDateString()}\n`;
+        textoTicket += `Hora: ${new Date().toLocaleTimeString()}\n`;
+        textoTicket += `Cliente: ${cliente}\n`;
+        textoTicket += `Tipo: ${
+          metodo === "efectivo" ? "PAGO EFECTIVO" : "A CUENTA (FIADO)"
+        }\n`;
+        textoTicket += `--------------------------\n`;
+
+        carrito.forEach((item) => {
+          total += item.pre;
+          textoTicket += `- ${item.nom}: $${item.pre}\n`;
+          let i = s.findIndex((x) => x.cod === item.cod && x.nom === item.nom);
+          if (i > -1) s[i].can = Math.max(0, s[i].can - 1);
+          if (metodo === "efectivo") {
+            hoy.push({
+              nom: item.nom,
+              pre: item.pre,
+              hora: new Date().toLocaleTimeString(),
+            });
+          }
+        });
+
+        if (metodo === "fiado")
+          deudores[cliente] = (deudores[cliente] || 0) + total;
+
+        textoTicket += `--------------------------\n`;
+        textoTicket += `*TOTAL: $${total.toFixed(2)}*\n\n`;
+        textoTicket += `¡Gracias por su compra!`;
+
+        localStorage.setItem("mm_s", JSON.stringify(s));
+        if (metodo === "efectivo")
+          localStorage.setItem("mm_hoy", JSON.stringify(hoy));
+        if (metodo === "fiado")
+          localStorage.setItem("mm_d", JSON.stringify(deudores));
+
+        if (confirm("¿Deseas enviar el Ticket por WhatsApp?")) {
+          let url =
+            "https://api.whatsapp.com/send?text=" +
+            encodeURIComponent(textoTicket);
+          window.open(url, "_blank");
+        } else {
+          alert("Venta registrada con éxito.");
+        }
+
+        carrito = [];
+        actualizarVistaCarrito();
+        verificarAlertas();
+      }
+
+      function verHistorialCompleto() {
+        let fecha = prompt("Ingresá la fecha (DD/MM/AAAA)");
+        if (!fecha) return;
+        let hist = JSON.parse(localStorage.getItem("mm_historial")) || [];
+        let filtrado = hist.filter((v) => v.fecha === fecha);
+        if (filtrado.length === 0) alert("No hay datos para esa fecha");
+        else
+          alert(
+            "Ventas " +
+              fecha +
+              ": $" +
+              filtrado.reduce((a, b) => a + b.pre, 0).toFixed(2)
+          );
       }
     </script>
   </body>
